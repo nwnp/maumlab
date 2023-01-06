@@ -1,0 +1,40 @@
+type User {
+  id: ID!
+  email: String
+  name: String
+  password: String
+  nickname: String
+}
+
+input InputSignup {
+  email: String
+  name: String
+  password: String
+  nickname: String
+}
+
+input InputLogin {
+  email: String!
+  password: String!
+}
+
+input InputEditInfo {
+  email: String
+  password: String
+  nickname: String
+  name: String
+}
+
+type Token {
+  accessToken: String!
+}
+
+type Query {
+  test(user: InputLogin!): Boolean!
+}
+
+type Mutation {
+  signup(user: InputSignup!): Boolean!
+  login(user: InputLogin!): Token!
+  editUserInfo(user: InputEditInfo!): Boolean!
+}

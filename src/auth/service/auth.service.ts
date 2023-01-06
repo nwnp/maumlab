@@ -3,7 +3,7 @@ import { GraphQLError } from 'graphql';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { UserLoginModel } from 'src/users/login.model';
+import { UserLoginModel } from 'src/users/models/login.model';
 
 @Injectable()
 export class AuthService {

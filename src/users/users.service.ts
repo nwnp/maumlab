@@ -1,6 +1,6 @@
-import { UserEditModel } from './edit.model';
+import { UserEditModel } from './models/edit.model';
 import { Injectable, Logger } from '@nestjs/common';
-import { UserSignupModel } from './signup.model';
+import { UserSignupModel } from './models/signup.model';
 import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/common/database/user.entity';
 import { GraphQLError } from 'graphql';

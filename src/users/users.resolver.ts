@@ -1,11 +1,11 @@
 import { User } from 'src/common/database/user.entity';
-import { UserEditModel } from './edit.model';
+import { UserEditModel } from './models/edit.model';
 import { GqlAuthGuard } from './../auth/guard/gql.auth.guard';
 import { AuthService } from './../auth/service/auth.service';
 import { UsersService } from './users.service';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { UserSignupModel } from './signup.model';
-import { UserLoginModel } from './login.model';
+import { UserSignupModel } from './models/signup.model';
+import { UserLoginModel } from './models/login.model';
 import { Token } from 'graphql';
 import { UseGuards } from '@nestjs/common';
 import { CurrentUser } from 'src/common/functions/current.user';

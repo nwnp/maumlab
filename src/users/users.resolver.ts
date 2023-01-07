@@ -9,6 +9,7 @@ import { UserLoginModel } from './models/login.model';
 import { Token } from 'graphql';
 import { UseGuards } from '@nestjs/common';
 import { CurrentUser } from 'src/common/functions/current.user';
+import { UserSecessionModel } from './models/secession.model';
 
 @Resolver()
 export class UsersResolver {
@@ -34,5 +35,14 @@ export class UsersResolver {
     @CurrentUser() userInfo: User,
   ): Promise<boolean> {
     return await this.usersService.editUserInfo(user, userInfo.id);
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(GqlAuthGuard)
+  async secession(
+    @Args('user') user: UserSecessionModel,
+    @CurrentUser() userInfo: User,
+  ): Promise<boolean> {
+    return await this.usersService.secession(user, userInfo.id);
   }
 }

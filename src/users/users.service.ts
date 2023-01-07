@@ -6,6 +6,7 @@ import { User } from 'src/common/database/user.entity';
 import { GraphQLError } from 'graphql';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserSecessionModel } from './models/secession.model';
 
 @Injectable()
 export class UsersService {
@@ -117,6 +118,31 @@ export class UsersService {
         this.logger.error('회원정보 수정 DAO ERROR');
         throw new GraphQLError('회원정보 수정 ERROR');
       }
+    }
+  }
+
+  async secession(user: UserSecessionModel, userId: number): Promise<boolean> {
+    const isExistUser = await this.getUserById(userId);
+    if (!isExistUser) throw new GraphQLError('유효하지 않은 회원');
+    if (user.email !== isExistUser.email)
+      throw new GraphQLError('유효하지 않은 이메일');
+
+    const compared = await bcrypt.compare(user.password, isExistUser.password);
+    if (!compared) throw new GraphQLError('유효하지 않은 비밀번호');
+
+    try {
+      const result = await this.dataSource
+        .getRepository(User)
+        .createQueryBuilder('user')
+        .delete()
+        .from(User)
+        .where('email = :email', { email: user.email })
+        .execute();
+      return result.affected ? true : false;
+    } catch (error) {
+      console.error(error);
+      this.logger.error('회원탈퇴 DAO ERROR');
+      throw new GraphQLError('회원탙퇴 DAO ERROR');
     }
   }
 }

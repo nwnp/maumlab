@@ -13,7 +13,7 @@ input InputSignup {
   nickname: String
 }
 
-input InputLogin {
+input InputUserInfo {
   email: String!
   password: String!
 }
@@ -30,11 +30,12 @@ type Token {
 }
 
 type Query {
-  test(user: InputLogin!): Boolean!
+  test(user: InputUserInfo!): Boolean!
 }
 
 type Mutation {
   signup(user: InputSignup!): Boolean!
-  login(user: InputLogin!): Token!
+  login(user: InputUserInfo!): Token!
   editUserInfo(user: InputEditInfo!): Boolean!
+  secession(user: InputUserInfo): Boolean!
 }

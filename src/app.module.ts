@@ -8,6 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { User } from './common/database/user.entity';
 import { LoggerMiddle } from './common/middlewares/logger.middleware';
 import { UsersModule } from './users/users.module';
+import { PostsModule } from './posts/posts.module';
+import { Post } from './common/database/post.entity';
 
 @Module({
   imports: [
@@ -20,7 +22,7 @@ import { UsersModule } from './users/users.module';
       database: 'maumlab',
       synchronize: true,
       logging: false,
-      entities: [User],
+      entities: [User, Post],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -31,6 +33,7 @@ import { UsersModule } from './users/users.module';
     }),
     UsersModule,
     AuthModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

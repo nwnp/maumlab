@@ -1,5 +1,6 @@
 import { IsEmail, IsNumber, IsString } from 'class-validator';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Post } from './post.entity';
 
 @Entity('user')
 export class User {
@@ -36,4 +37,7 @@ export class User {
   })
   @IsString()
   name: string;
+
+  @OneToMany(() => Post, (post) => post.user)
+  posts: Post;
 }

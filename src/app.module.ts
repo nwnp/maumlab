@@ -10,6 +10,8 @@ import { LoggerMiddle } from './common/middlewares/logger.middleware';
 import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { Post } from './common/database/post.entity';
+import { Reply } from './common/database/reply.entity';
+import { RepliesModule } from './replies/replies.module';
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { Post } from './common/database/post.entity';
       database: 'maumlab',
       synchronize: true,
       logging: false,
-      entities: [User, Post],
+      entities: [User, Post, Reply],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -34,12 +36,14 @@ import { Post } from './common/database/post.entity';
     UsersModule,
     AuthModule,
     PostsModule,
+    RepliesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddle).forRoutes('*');
-  }
-}
+// export class AppModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer.apply(LoggerMiddle).forRoutes('*');
+//   }
+// }
+export class AppModule {}

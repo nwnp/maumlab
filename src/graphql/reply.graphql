@@ -1,0 +1,19 @@
+type Reply {
+  id: ID
+  content: String
+  user_id: Int
+  post_id: Int
+  replied_id: Int
+  reply_type: Boolean
+  user: User
+}
+
+input InputReplyRegister {
+  content: String!
+  post_id: Int!
+  replied_id: Int
+}
+
+type Mutation {
+  registerReply(reply: InputReplyRegister!): Boolean!
+}

@@ -5,9 +5,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Reply } from './reply.entity';
 import { User } from './user.entity';
 
 @Entity('post')
@@ -48,4 +50,7 @@ export class Post {
   @ManyToOne(() => User, (user) => user.posts)
   @JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])
   user: User;
+
+  @OneToMany(() => Reply, (reply) => reply.post)
+  replies: Reply;
 }

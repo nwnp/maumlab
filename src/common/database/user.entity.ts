@@ -1,6 +1,7 @@
 import { IsEmail, IsNumber, IsString } from 'class-validator';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Post } from './post.entity';
+import { Reply } from './reply.entity';
 
 @Entity('user')
 export class User {
@@ -40,4 +41,7 @@ export class User {
 
   @OneToMany(() => Post, (post) => post.user)
   posts: Post;
+
+  @OneToMany(() => Reply, (reply) => reply.user)
+  replies: Reply;
 }

@@ -13,8 +13,8 @@ export class PostsResolver {
 
   @Query(() => Post)
   @UseGuards(GqlAuthGuard)
-  async getPost(@Args('postId') postId: number): Promise<Post> {
-    return await this.postsService.getPost(postId);
+  async getPostDetail(@Args('postId') postId: number): Promise<Post> {
+    return await this.postsService.getPostDetail(postId);
   }
 
   @Query(() => [Post])

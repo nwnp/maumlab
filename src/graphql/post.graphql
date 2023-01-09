@@ -5,6 +5,7 @@ type Post {
   user_id: Int
   created_at: String
   updated_at: String
+  replies: [Reply]
 }
 
 input InputPostInfo {
@@ -12,8 +13,15 @@ input InputPostInfo {
   content: String!
 }
 
+type PostAndReply {
+  post: Post
+  reply: Reply
+  user: User
+  content: String
+}
+
 type Query {
-  getPost(postId: Int!): Post
+  getPostDetail(postId: Int!): Post
   searchPosts(title: String!): [Post]
   myPosts: [Post]
 }

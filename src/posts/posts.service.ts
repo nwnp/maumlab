@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PostCreateModel } from './models/create.model';
 import { GraphQLError } from 'graphql';
 import { Post } from 'src/common/database/post.entity';
+import { Reply } from 'src/common/database/reply.entity';
 
 @Injectable()
 export class PostsService {
@@ -16,9 +17,8 @@ export class PostsService {
     return true;
   }
 
-  // 게시글 확인
-  // TODO: 댓글 API 생성 후 댓글하고 대댓글까지 가져오는 sql문 추가
-  async getPost(postId: number): Promise<Post> {
+  // 단순 참조 목적
+  async getPostById(postId: number): Promise<Post> {
     try {
       const post = await this.dataSource
         .createQueryBuilder()
@@ -31,6 +31,41 @@ export class PostsService {
       console.error(error);
       this.logger.error('게시글 확인 DAO ERROR');
       throw new GraphQLError('게시글 확인 DAO ERROR');
+    }
+  }
+
+  // 게시글 확인
+  // query($postId: Int!) {
+  //   getPostDetail(postId: $postId) {
+  //     id
+  //     title
+  //     content
+  //     replies {
+  //       id
+  //       content
+  //       reply_type
+  //       replied_id
+  //       user {
+  //         nickname
+  //         email
+  //       }
+  //     }
+  //   }
+  // }
+  async getPostDetail(postId: number): Promise<Post> {
+    try {
+      const post = await this.dataSource
+        .getRepository(Post)
+        .createQueryBuilder('post')
+        .leftJoinAndSelect('post.replies', 'reply')
+        .leftJoinAndSelect('reply.user', 'replies')
+        .where('post.id = :id', { id: postId })
+        .getOne();
+      return post;
+    } catch (error) {
+      console.error(error);
+      this.logger.error('게시글/댓글 확인 DAO ERROR');
+      throw new GraphQLError('게시글/댓글 확인 DAO ERROR');
     }
   }
 
@@ -73,25 +108,40 @@ export class PostsService {
   }
 
   // 게시글 삭제
-  // TODO: 댓글, 대댓글 API 생성 후 -> 삭제할 때 댓글도 같이 삭제되게 수정
   async deletePost(postId: number, userId: number): Promise<boolean> {
-    const isExistPost = await this.getPost(postId);
+    const isExistPost = await this.getPostById(postId);
     if (!isExistPost) throw new GraphQLError('존재하지 않는 게시글');
     if (isExistPost.user_id !== userId)
       throw new GraphQLError('본인 게시글이 아닙니다.');
 
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
-      const result = await this.dataSource
+      this.logger.verbose('게시글 삭제 트랜잭션 시작');
+      await this.dataSource
+        .createQueryBuilder()
+        .delete()
+        .from(Reply)
+        .where('post_id = :post_id', { post_id: postId })
+        .execute();
+      const deletedPost = await this.dataSource
         .createQueryBuilder()
         .delete()
         .from(Post)
         .where('id = :id', { id: postId })
         .execute();
-      return result.affected ? true : false;
+      await queryRunner.commitTransaction();
+      this.logger.verbose('게시글 삭제 트랜잭션 완료');
+      return deletedPost.affected ? true : false;
     } catch (error) {
       console.error(error);
-      this.logger.error('게시글 삭제 DAO ERROR');
-      throw new GraphQLError('게시글 삭제 DAO ERROR');
+      await queryRunner.rollbackTransaction();
+      this.logger.error('게시글 삭제 트랜잭션 Rollback');
+      new GraphQLError('게시글 삭제 DAO ERROR');
+    } finally {
+      await queryRunner.release();
+      this.logger.verbose('게시글 삭제 트랜잭션 Released');
     }
   }
 

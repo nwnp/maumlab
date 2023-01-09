@@ -1,12 +1,11 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { User } from './common/database/user.entity';
-import { LoggerMiddle } from './common/middlewares/logger.middleware';
 import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { Post } from './common/database/post.entity';
